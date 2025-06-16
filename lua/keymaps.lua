@@ -20,6 +20,7 @@ vim.keymap.set('n', '<leader>v', ':vsplit<CR>', { desc = 'Split window verticall
 vim.keymap.set('n', '<leader>w', ':%s/\\s\\+$//e<CR>', { desc = 'Remove trailing whitespace' })
 
 -- Insert mode 'o' and 'O' (exit insert mode after inserting new line)
+
 vim.keymap.set('n', 'O', 'O<Esc>', { desc = 'Insert line above and exit insert mode' })
 vim.keymap.set('n', 'o', 'o<Esc>', { desc = 'Insert line below and exit insert mode' })
 

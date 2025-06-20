@@ -23,7 +23,7 @@ vim.opt.rtp:prepend(lazypath)
 -- Make sure to setup `mapleader` and `maplocalleader` before
 -- loading lazy.nvim so that mappings are correct.
 -- This is also a good place to setup other settings (vim.opt)
-vim.g.mapleader = "-" -- Your original leader was '-'
+vim.g.mapleader = "-"
 vim.g.maplocalleader = "-"
 
 -- Require and load your configuration modules

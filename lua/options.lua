@@ -35,7 +35,7 @@ vim.opt.signcolumn = 'yes'            -- Always show the sign column (for LSP di
 vim.opt.smartindent = true            -- Smart autoindenting
 vim.opt.smarttab = true               -- Smart tab handling
 vim.opt.smoothscroll = true           -- Enable smooth scrolling (if supported by terminal)
-vim.opt.softtabstop = 4               -- Number of spaces a Tab counts for while editing
+vim.opt.softtabstop = 2               -- Number of spaces a Tab counts for while editing
 vim.opt.statusline = ''               -- Clear default statusline (airline/lualine will manage it)
 vim.opt.termguicolors = true          -- Enable true colors if your terminal supports it
 vim.opt.tabstop = 2                   -- Number of spaces a Tab character represents
@@ -65,3 +65,9 @@ vim.opt.shellxquote = ''
 
 -- Plugin-specific global variables (equivalent to 'let g:...')
 vim.g.user_emmet_leader_key = '<C-X>'
+
+-- Diagnostic display inline
+vim.diagnostic.config({
+  virtual_text = true,
+  underline = true
+})

@@ -1,130 +1,252 @@
 -- ~/.config/nvim/lua/plugins.lua
 
-require('lazy').setup({
-    -- Existing plugins...
-    { 'github/copilot.vim' },
-    { 'williamboman/mason.nvim', lazy = false, config = function() require('mason').setup() end },
-    { 'williamboman/mason-lspconfig.nvim', lazy = false, dependencies = { 'williamboman/mason.nvim', 'neovim/nvim-lspconfig' }, opts = { auto_install = true, ensure_installed = { 'lua_ls', 'tailwindcss' } } }, -- Add tailwindcss here
-    { 'neovim/nvim-lspconfig', dependencies = { 'williamboman/mason-lspconfig.nvim' }, 
+return {
+  { 'github/copilot.vim' },
+  {
+    'williamboman/mason.nvim',
+    lazy = false,
     config = function()
-        require('lsp-config') -- Load the separate LSP config file
+      require('mason').setup()
     end,
-    opts = {
-        inlay_hints = { enabled = false },
-    },}, -- Config moved to separate file
-    { 'nvim-lualine/lualine.nvim', dependencies = { 'nvim-tree/nvim-web-devicons' }, config = function()require('lualine').setup({
+  },
+  {
+    'williamboman/mason-lspconfig.nvim',
+    lazy = false,
+    dependencies = { 'williamboman/mason.nvim' },
+    config = function()
+      require('mason-lspconfig').setup({
+        ensure_installed = { 'lua_ls', 'tailwindcss' },
+        automatic_installation = true,
+      })
+    end,
+  },
+  {
+    'neovim/nvim-lspconfig',
+    dependencies = { 'williamboman/mason-lspconfig.nvim' },
+    config = function()
+      require('lsp-config') -- Load the separate LSP config file
+    end,
+  },
+  {
+    'artemave/workspace-diagnostics.nvim',
+    lazy = false,
+    dependencies = { 'neovim/nvim-lspconfig' },
+    config = function()
+      require('workspace-diagnostics').setup({
+        auto_open = true,
+        auto_close = true,
+        auto_refresh = true,
+        diagnostics = {
+          enable = true,
+          debounce = 1000,
+        },
+      })
+    end,
+  },
+  {
+    'j-hui/fidget.nvim',
+    config = function()
+      require('fidget').setup({})
+    end,
+  },
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require('lualine').setup({
         options = {
-            icons_enabled = true,
-            theme = 'gruvbox',
+          icons_enabled = true,
+          theme = 'gruvbox',
         },
         sections = {
-            lualine_a = { 'mode' },
-            lualine_b = {
-                {
-                    function()
-                        return 'BN: ' .. vim.api.nvim_buf_get_number(0)
-                    end,
-                    color = { fg = '#bb992a' },
-                },
-                'branch',
-                'diff',
+          lualine_a = { 'mode' },
+          lualine_b = {
+            {
+              function()
+                return 'BN: ' .. vim.api.nvim_buf_get_number(0)
+              end,
+              color = { fg = '#bb992a' },
             },
-            lualine_c = { 'filename' },
-            lualine_x = { 'diagnostics', 'encoding', 'fileformat', 'filetype' },
-            lualine_y = {
-                {
-                    function()
-                        return os.date('%c')
-                    end,
-                    color = { fg = '#99bb2a' },
-                },
-                'progress',
+            'branch',
+            'diff',
+          },
+          lualine_c = { 'filename' },
+          lualine_x = {
+            {
+              'diagnostics',
+              sources = { "nvim_workspace_diagnostic" }
             },
-            lualine_z = { 'location' },
+            'encoding',
+            'fileformat',
+            'filetype'
+          },
+          lualine_y = {
+            {
+              function()
+                return os.date('%c')
+              end,
+              color = { fg = '#99bb2a' },
+            },
+            'progress',
+          },
+          lualine_z = { 'location' },
         },
         inactive_sections = {
-            lualine_a = {},
-            lualine_b = {},
-            lualine_c = { 'filename' },
-            lualine_x = { 'location' },
-            lualine_y = {},
-            lualine_z = {},
+          lualine_a = {},
+          lualine_b = {},
+          lualine_c = { 'filename' },
+          lualine_x = { 'location' },
+          lualine_y = {},
+          lualine_z = {},
         },
         tabline = {},
         extensions = {},
-    })
-end,},
-{ 'nvim-telescope/telescope.nvim',
-tag = '0.1.8',
-dependencies = { 'nvim-lua/plenary.nvim', { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' } },
-config = function()
-    vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files)
-    vim.keymap.set('n', '<leader>fg', require('telescope.builtin').live_grep)
-    vim.keymap.set('n', '<leader>fb', require('telescope.builtin').buffers)
-    vim.keymap.set('n', '<leader>fc', require('telescope.builtin').commands)
-end,},
-{ 'mattn/emmet-vim' },
-{ 'morhetz/gruvbox', config = function() vim.cmd('colorscheme gruvbox') end },
-{ 'vhyrro/luarocks.nvim', priority = 1000, config = true },
-
--- New plugins for autocompletion
-{
-    'hrsh7th/nvim-cmp',
+      })
+    end,
+  },
+  {
+    'nvim-telescope/telescope.nvim',
+    tag = '0.1.8',
     dependencies = {
-        'hrsh7th/cmp-nvim-lsp', -- LSP source
-        'hrsh7th/cmp-buffer', -- Buffer source
-        'hrsh7th/cmp-path', -- Path source
-        'L3MON4D3/LuaSnip', -- Snippet engine
-        'saadparwaiz1/cmp_luasnip', -- Snippet completion
-        'roobert/tailwindcss-colorizer-cmp.nvim', -- Optional: Color previews for Tailwind
+      'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope-ui-select.nvim',
+      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
     },
     config = function()
-        local cmp = require('cmp')
-        cmp.setup({
-            snippet = {
-                expand = function(args)
-                    require('luasnip').lsp_expand(args.body)
-                end,
-            },
-            mapping = cmp.mapping.preset.insert({
-                ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-                ['<C-f>'] = cmp.mapping.scroll_docs(4),
-                ['<C-t>'] = cmp.mapping.complete(),
-                ['<C-e>'] = cmp.mapping.abort(),
-                ['<CR>'] = cmp.mapping.confirm({ select = true }),
-                ['<Tab>'] = cmp.mapping.select_next_item(),
-                ['<S-Tab>'] = cmp.mapping.select_prev_item(),
-            }),
-            sources = cmp.config.sources({
-                { name = 'nvim_lsp', max_item_count = 20, keyword_length = 3 }, -- Limit suggestions for performance
-                { name = 'luasnip' },
-                { name = 'buffer' },
-                { name = 'path' },
-            }),
-            formatting = {
-                format = require('tailwindcss-colorizer-cmp').formatter, -- Enable color previews
-            },
-        })
+      require('telescope').setup()
+      require('telescope').load_extension('ui-select')
+      local builtin = require('telescope.builtin')
+      vim.keymap.set('n', '<leader>ff', builtin.find_files)
+      vim.keymap.set('n', '<leader>fg', builtin.live_grep)
+      vim.keymap.set('n', '<leader>fb', builtin.buffers)
+      vim.keymap.set('n', '<leader>fc', builtin.commands)
     end,
-}, 
-{
-    "CopilotC-Nvim/CopilotChat.nvim",
+  },
+  { 'mattn/emmet-vim' },
+  {
+    'morhetz/gruvbox',
+    config = function()
+      vim.cmd('colorscheme gruvbox')
+    end,
+  },
+  {
+    'vhyrro/luarocks.nvim',
+    priority = 1000,
+    config = true,
+  },
+  {
+    'hrsh7th/nvim-cmp',
     dependencies = {
-        { "github/copilot.vim" }, -- or zbirenbaum/copilot.lua
-        { "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log and async functions
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
+      'L3MON4D3/LuaSnip',
+      'saadparwaiz1/cmp_luasnip',
+      'roobert/tailwindcss-colorizer-cmp.nvim',
     },
-    build = "make tiktoken", -- Only on MacOS or Linux
-    opts = {
-        -- See Configuration section for options
+    config = function()
+      local cmp = require('cmp')
+      cmp.setup({
+        snippet = {
+          expand = function(args)
+            require('luasnip').lsp_expand(args.body)
+          end,
+        },
+        mapping = cmp.mapping.preset.insert({
+          ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+          ['<C-f>'] = cmp.mapping.scroll_docs(4),
+          ['<C-t>'] = cmp.mapping.complete(),
+          ['<C-e>'] = cmp.mapping.abort(),
+          ['<CR>'] = cmp.mapping.confirm({ select = true }),
+          ['<Tab>'] = cmp.mapping.select_next_item(),
+          ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+        }),
+        sources = cmp.config.sources({
+          { name = 'nvim_lsp', max_item_count = 20, keyword_length = 3 },
+          { name = 'luasnip' },
+          { name = 'buffer' },
+          { name = 'path' },
+        }),
+        formatting = {
+          format = require('tailwindcss-colorizer-cmp').formatter,
+        },
+      })
+    end,
+  },
+  {
+    'saghen/blink.cmp',
+    dependencies = { 'rafamadriz/friendly-snippets' },
+    version = '1.*',
+    config = function()
+      require('blink.cmp').setup({
+        keymap = {
+          preset = 'default',
+          ['<CR>'] = { 'accept', 'fallback' },
+          ['<C><leader>'] = { 'show' },
+        },
+        appearance = {
+          nerd_font_variant = 'mono',
+        },
+        completion = {
+          documentation = { auto_show = true },
+        },
+        sources = {
+          default = { 'lsp', 'path', 'snippets', 'buffer' },
+        },
+        fuzzy = { implementation = 'prefer_rust_with_warning' },
+      })
+    end,
+  },
+  {
+    'stevearc/conform.nvim',
+    config = function()
+      require('conform').setup({
+        formatters_by_ft = {
+          lua = { 'stylua' },
+          javascript = { 'prettierd', 'prettier', stop_after_first = true },
+          javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+          typescript = { 'prettierd', 'prettier', stop_after_first = true },
+          typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+          json = { 'prettierd', 'prettier', stop_after_first = true },
+          graphql = { 'prettierd', 'prettier', stop_after_first = true },
+        },
+        format_on_save = {
+          timeout_ms = 500,
+          lsp_format = 'fallback',
+        },
+      })
+    end,
+  },
+  {
+    'windwp/nvim-ts-autotag',
+    config = function()
+      require('nvim-ts-autotag').setup()
+    end,
+  },
+  {
+    'folke/trouble.nvim',
+    cmd = 'Trouble',
+    keys = {
+      { '<leader>xx', '<cmd>Trouble diagnostics toggle<cr>', desc = 'Diagnostics (Trouble)' },
+      { '<leader>xX', '<cmd>Trouble diagnostics toggle filter.buf=0<cr>', desc = 'Buffer Diagnostics (Trouble)' },
+      { '<leader>cs', '<cmd>Trouble symbols toggle focus=false<cr>', desc = 'Symbols (Trouble)' },
+      { '<leader>cl', '<cmd>Trouble lsp toggle focus=false win.position=right<cr>', desc = 'LSP Definitions / references / ... (Trouble)' },
+      { '<leader>xL', '<cmd>Trouble loclist toggle<cr>', desc = 'Location List (Trouble)' },
+      { '<leader>xQ', '<cmd>Trouble qflist toggle<cr>', desc = 'Quickfix List (Trouble)' },
     },
-    -- See Commands section for default commands if you want to lazy load on them
-},
-},
-{
-    checker = {
-        enabled = true,
-        frequency = 60 * 60 * 24 * 7,
+    config = function()
+      require('trouble').setup()
+    end,
+  },
+  {
+    'CopilotC-Nvim/CopilotChat.nvim',
+    dependencies = {
+      { 'github/copilot.vim' },
+      { 'nvim-lua/plenary.nvim', branch = 'master' },
     },
-})
-
-vim.cmd('packadd! matchit')
+    build = 'make tiktoken',
+    config = function()
+      require('CopilotChat').setup()
+    end,
+  },
+}

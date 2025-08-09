@@ -1,7 +1,12 @@
 -- ~/.config/nvim/lua/plugins.lua
 
 return {
-    { 'github/copilot.vim' },
+    {
+        'github/copilot.vim',
+        config = function()
+            vim.g.copilot_no_tab_map = false -- Disable Copilot's default Tab mapping
+        end,
+    },
     {
         'williamboman/mason.nvim',
         lazy = false,
@@ -123,16 +128,12 @@ return {
         end,
     },
     { 'mattn/emmet-vim' },
-    --    {
-    --        'morhetz/gruvbox',
-    --        config = function()
-    --            vim.cmd('colorscheme gruvbox')
-    --        end,
-    --    },
-    -- Install without configuration
-    { 'projekt0n/github-nvim-theme', name = 'github-theme' },
-
-    -- Or with configuration
+    {
+        'morhetz/gruvbox',
+        config = function()
+            vim.cmd('colorscheme gruvbox')
+        end,
+    },
     {
         'projekt0n/github-nvim-theme',
         name = 'github-theme',
@@ -152,6 +153,12 @@ return {
         config = true,
     },
     {
+        "zbirenbaum/copilot-cmp",
+        config = function()
+            require("copilot_cmp").setup()
+        end
+    },
+    {
         'hrsh7th/nvim-cmp',
         dependencies = {
             'hrsh7th/cmp-nvim-lsp',
@@ -160,6 +167,7 @@ return {
             'L3MON4D3/LuaSnip',
             'saadparwaiz1/cmp_luasnip',
             'roobert/tailwindcss-colorizer-cmp.nvim',
+            'zbirenbaum/copilot-cmp',
         },
         config = function()
             local cmp = require('cmp')
@@ -179,10 +187,13 @@ return {
                     ['<S-Tab>'] = cmp.mapping.select_prev_item(),
                 }),
                 sources = cmp.config.sources({
-                    { name = 'nvim_lsp', max_item_count = 20, keyword_length = 3 },
-                    { name = 'luasnip' },
+                    -- Copilot Source
+                    { name = "copilot",  group_index = 2 },
+                    -- Other Sources
+                    { name = "nvim_lsp", group_index = 2, max_item_count = 20, keyword_length = 3 },
+                    { name = "path",     group_index = 2 },
+                    { name = "luasnip",  group_index = 2 },
                     { name = 'buffer' },
-                    { name = 'path' },
                 }),
                 formatting = {
                     format = require('tailwindcss-colorizer-cmp').formatter,
@@ -190,30 +201,30 @@ return {
             })
         end,
     },
-    {
-        'saghen/blink.cmp',
-        dependencies = { 'rafamadriz/friendly-snippets' },
-        version = '1.*',
-        config = function()
-            require('blink.cmp').setup({
-                keymap = {
-                    preset = 'default',
-                    ['<CR>'] = { 'accept', 'fallback' },
-                    ['<C><leader>'] = { 'show' },
-                },
-                appearance = {
-                    nerd_font_variant = 'mono',
-                },
-                completion = {
-                    documentation = { auto_show = true },
-                },
-                sources = {
-                    default = { 'lsp', 'path', 'snippets', 'buffer' },
-                },
-                fuzzy = { implementation = 'prefer_rust_with_warning' },
-            })
-        end,
-    },
+    --    {
+    --        'saghen/blink.cmp',
+    --        dependencies = { 'rafamadriz/friendly-snippets' },
+    --        version = '1.*',
+    --        config = function()
+    --            require('blink.cmp').setup({
+    --                keymap = {
+    --                    preset = 'default',
+    --                    ['<CR>'] = { 'accept', 'fallback' },
+    --                    ['<C><leader>'] = { 'show' },
+    --                },
+    --                appearance = {
+    --                    nerd_font_variant = 'mono',
+    --                },
+    --                completion = {
+    --                    documentation = { auto_show = true },
+    --                },
+    --                sources = {
+    --                    default = { 'lsp', 'path', 'snippets', 'buffer' },
+    --                },
+    --                fuzzy = { implementation = 'prefer_rust_with_warning' },
+    --            })
+    --        end,
+    --    },
     {
         'stevearc/conform.nvim',
         config = function()

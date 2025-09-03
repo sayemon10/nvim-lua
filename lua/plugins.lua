@@ -49,6 +49,14 @@ return {
         end,
     },
     {
+        'alvan/vim-closetag', -- Or the specific Neovim version if available
+        config = function()
+            -- Optional: Configure settings
+            vim.g.closetag_filenames = '*.html,*.xhtml,*.jsx'
+            vim.g.closetag_filetypes = 'html,xhtml,jsx'
+        end
+    },
+    {
         'j-hui/fidget.nvim',
         config = function()
             require('fidget').setup({})

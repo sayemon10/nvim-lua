@@ -26,13 +26,6 @@ return {
         end,
     },
     {
-        'neovim/nvim-lspconfig',
-        dependencies = { 'williamboman/mason-lspconfig.nvim' },
-        config = function()
-            require('lsp-config') -- Load the separate LSP config file
-        end,
-    },
-    {
         'artemave/workspace-diagnostics.nvim',
         lazy = false,
         dependencies = { 'neovim/nvim-lspconfig' },

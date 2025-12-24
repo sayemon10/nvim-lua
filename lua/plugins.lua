@@ -3,6 +3,7 @@
 return {
     {
         'github/copilot.vim',
+        lazy = false,
         config = function()
             vim.g.copilot_no_tab_map = false -- Disable Copilot's default Tab mapping
         end,
@@ -154,7 +155,17 @@ return {
         config = true,
     },
     {
+        "zbirenbaum/copilot.lua",
+        cmd = "Copilot",
+        event = "InsertEnter",
+        opts = {
+            suggestion = { enabled = false }, -- Disable built-in suggestion (we use copilot-cmp)
+            panel = { enabled = false },      -- Disable panel if you don't want it
+        },
+    },
+    {
         "zbirenbaum/copilot-cmp",
+        dependencies = "zbirenbaum/copilot.lua",
         config = function()
             require("copilot_cmp").setup()
         end

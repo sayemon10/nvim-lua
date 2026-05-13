@@ -381,4 +381,12 @@ return {
             require('CopilotChat').setup()
         end,
     },
+    {
+        'christoomey/vim-tmux-navigator',
+        cmd = { 'TmuxNavigateLeft', 'TmuxNavigateDown', 'TmuxNavigateUp', 'TmuxNavigateRight' },
+        keys = { { '<C-h>', '<cmd>TmuxNavigateLeft<cr>', desc = 'Navigate Left (Tmux)' },
+            { '<C-j>', '<cmd>TmuxNavigateDown<cr>',  desc = 'Navigate Down (Tmux)' },
+            { '<C-k>', '<cmd>TmuxNavigateUp<cr>',    desc = 'Navigate Up (Tmux)' },
+            { '<C-l>', '<cmd>TmuxNavigateRight<cr>', desc = 'Navigate Right (Tmux)' } }
+    },
 }

@@ -25,10 +25,11 @@ vim.g.mapleader = "-"
 vim.g.maplocalleader = "-"
 
 -- Load configuration modules
-require('options')   -- General Neovim options
-require('keymaps')   -- Keybindings
-require('autocmds')  -- Autocommands
-require('functions') -- Custom Lua functions
+require('options')          -- General Neovim options
+require('keymaps')          -- Keybindings
+require('autocmds')         -- Autocommands
+require('functions')        -- Custom Lua functions
+require("cursor-animation") -- cursor-animation
 
 -- Setup lazy.nvim
 require("lazy").setup({

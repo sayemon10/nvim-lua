@@ -159,17 +159,33 @@ return {
         cmd = "Copilot",
         event = "InsertEnter",
         opts = {
-            suggestion = { enabled = false }, -- Disable built-in suggestion (we use copilot-cmp)
-            panel = { enabled = false },      -- Disable panel if you don't want it
+            suggestion = { enabled = true }, -- Disable built-in suggestion (we use copilot-cmp)
+            panel = { enabled = false },     -- Disable panel if you don't want it
         },
     },
-    {
-        "zbirenbaum/copilot-cmp",
-        dependencies = "zbirenbaum/copilot.lua",
-        config = function()
-            require("copilot_cmp").setup()
-        end
-    },
+    --    {
+    --        "zbirenbaum/copilot-cmp",
+    --        dependencies = "zbirenbaum/copilot.lua",
+    --        config = function()
+    --            -- Monkey-patch the deprecated call
+    --            local source_path = vim.fn.stdpath("data") .. "/lazy/copilot-cmp/lua/copilot_cmp/source.lua"
+    --            local f = io.open(source_path, "r")
+    --            if f then
+    --                local content = f:read("*a")
+    --                f:close()
+    --                if content:match("client%.is_stopped%(%)") then
+    --                    content = content:gsub("client%.is_stopped%(%)", "client:is_stopped()")
+    --                    f = io.open(source_path, "w")
+    --                    if f then
+    --                        f:write(content)
+    --                        f:close()
+    --                    end
+    --                end
+    --            end
+    --
+    --            require("copilot_cmp").setup()
+    --        end
+    --    },
     {
         'hrsh7th/nvim-cmp',
         dependencies = {

@@ -5,7 +5,9 @@ return {
         'github/copilot.vim',
         lazy = false,
         config = function()
-            vim.g.copilot_no_tab_map = false -- Disable Copilot's default Tab mapping
+            vim.g.copilot_no_tab_map = true
+            vim.api.nvim_set_keymap('i', '<C-Tab>', 'copilot#Accept("<CR>")', { silent = true, expr = true })
+            vim.g.copilot_assume_mapped = true
         end,
     },
     {
@@ -137,55 +139,10 @@ return {
         end,
     },
     {
-        'projekt0n/github-nvim-theme',
-        name = 'github-theme',
-        lazy = false,    -- make sure we load this during startup if it is your main colorscheme
-        priority = 1000, -- make sure to load this before all the other start plugins
-        config = function()
-            require('github-theme').setup({
-                -- ...
-            })
-
-            vim.cmd('colorscheme github_dark')
-        end,
-    },
-    {
         'vhyrro/luarocks.nvim',
         priority = 1000,
         config = true,
     },
-    {
-        "zbirenbaum/copilot.lua",
-        cmd = "Copilot",
-        event = "InsertEnter",
-        opts = {
-            suggestion = { enabled = true }, -- Disable built-in suggestion (we use copilot-cmp)
-            panel = { enabled = false },     -- Disable panel if you don't want it
-        },
-    },
-    --    {
-    --        "zbirenbaum/copilot-cmp",
-    --        dependencies = "zbirenbaum/copilot.lua",
-    --        config = function()
-    --            -- Monkey-patch the deprecated call
-    --            local source_path = vim.fn.stdpath("data") .. "/lazy/copilot-cmp/lua/copilot_cmp/source.lua"
-    --            local f = io.open(source_path, "r")
-    --            if f then
-    --                local content = f:read("*a")
-    --                f:close()
-    --                if content:match("client%.is_stopped%(%)") then
-    --                    content = content:gsub("client%.is_stopped%(%)", "client:is_stopped()")
-    --                    f = io.open(source_path, "w")
-    --                    if f then
-    --                        f:write(content)
-    --                        f:close()
-    --                    end
-    --                end
-    --            end
-    --
-    --            require("copilot_cmp").setup()
-    --        end
-    --    },
     {
         'hrsh7th/nvim-cmp',
         dependencies = {
@@ -215,9 +172,6 @@ return {
                     ['<S-Tab>'] = cmp.mapping.select_prev_item(),
                 }),
                 sources = cmp.config.sources({
-                    -- Copilot Source
-                    { name = "copilot",  group_index = 2 },
-                    -- Other Sources
                     { name = "nvim_lsp", group_index = 2, max_item_count = 20, keyword_length = 3 },
                     { name = "path",     group_index = 2 },
                     { name = "luasnip",  group_index = 2 },

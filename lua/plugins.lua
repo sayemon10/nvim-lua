@@ -2,12 +2,29 @@
 
 return {
     {
-        'github/copilot.vim',
-        lazy = false,
+        'zbirenbaum/copilot.lua',
+        cmd = 'Copilot',
+        event = 'InsertEnter',
         config = function()
-            vim.g.copilot_assume_mapped = true
-            vim.g.copilot_no_tab_map = true
-            vim.api.nvim_set_keymap('i', '<C-Tab>', 'copilot#Accept("<CR>")', { silent = true, expr = true })
+            require('copilot').setup({
+                suggestion = {
+                    enabled = true,
+                    auto_trigger = true,
+                    keymap = {
+                        accept = false, -- handled manually below
+                    },
+                },
+                panel = { enabled = false },
+            })
+
+            -- Tab to accept Copilot suggestion, fallback to normal Tab
+            vim.keymap.set('i', '<Tab>', function()
+                if require('copilot.suggestion').is_visible() then
+                    require('copilot.suggestion').accept()
+                else
+                    return vim.api.nvim_replace_termcodes('<Tab>', true, true, true)
+                end
+            end, { silent = true, expr = true })
         end,
     },
     {
@@ -45,9 +62,8 @@ return {
         end,
     },
     {
-        'alvan/vim-closetag', -- Or the specific Neovim version if available
+        'alvan/vim-closetag',
         config = function()
-            -- Optional: Configure settings
             vim.g.closetag_filenames = '*.html,*.xhtml,*.jsx'
             vim.g.closetag_filetypes = 'html,xhtml,jsx'
         end
@@ -172,6 +188,7 @@ return {
                     ['<S-Tab>'] = cmp.mapping.select_prev_item(),
                 }),
                 sources = cmp.config.sources({
+                    { name = "copilot",  group_index = 2 },
                     { name = "nvim_lsp", group_index = 2, max_item_count = 20, keyword_length = 3 },
                     { name = "path",     group_index = 2 },
                     { name = "luasnip",  group_index = 2 },
@@ -183,30 +200,6 @@ return {
             })
         end,
     },
-    --    {
-    --        'saghen/blink.cmp',
-    --        dependencies = { 'rafamadriz/friendly-snippets' },
-    --        version = '1.*',
-    --        config = function()
-    --            require('blink.cmp').setup({
-    --                keymap = {
-    --                    preset = 'default',
-    --                    ['<CR>'] = { 'accept', 'fallback' },
-    --                    ['<C><leader>'] = { 'show' },
-    --                },
-    --                appearance = {
-    --                    nerd_font_variant = 'mono',
-    --                },
-    --                completion = {
-    --                    documentation = { auto_show = true },
-    --                },
-    --                sources = {
-    --                    default = { 'lsp', 'path', 'snippets', 'buffer' },
-    --                },
-    --                fuzzy = { implementation = 'prefer_rust_with_warning' },
-    --            })
-    --        end,
-    --    },
     {
         'stevearc/conform.nvim',
         config = function()
@@ -255,9 +248,6 @@ return {
         lazy = false,
         ---@type snacks.Config
         opts = {
-            -- your configuration comes here
-            -- or leave it empty to use the default settings
-            -- refer to the configuration section below
             bigfile = { enabled = true },
             dashboard = { enabled = true },
             explorer = { enabled = true },
@@ -275,7 +265,6 @@ return {
     {
         "folke/sidekick.nvim",
         opts = {
-            -- add any options here
             cli = {
                 mux = {
                     backend = "zellij",
@@ -283,14 +272,12 @@ return {
                 },
             },
         },
-        -- stylua: ignore
         keys = {
             {
                 "<tab>",
                 function()
-                    -- if there is a next edit, jump to it, otherwise apply it if any
                     if not require("sidekick").nes_jump_or_apply() then
-                        return "<Tab>" -- fallback to normal tab
+                        return "<Tab>"
                     end
                 end,
                 expr = true,
@@ -304,8 +291,6 @@ return {
             {
                 "<leader>as",
                 function() require("sidekick.cli").select() end,
-                -- Or to select only installed tools:
-                -- require("sidekick.cli").select({ filter = { installed = true } })
                 desc = "Select CLI",
             },
             {
@@ -332,7 +317,6 @@ return {
                 mode = { "n", "x", "i", "t" },
                 desc = "Sidekick Switch Focus",
             },
-            -- Example of a keybinding to open Claude directly
             {
                 "<leader>ac",
                 function() require("sidekick.cli").toggle({ name = "claude", focus = true }) end,
@@ -343,7 +327,7 @@ return {
     {
         'CopilotC-Nvim/CopilotChat.nvim',
         dependencies = {
-            { 'github/copilot.vim' },
+            { 'zbirenbaum/copilot.lua' },
             { 'nvim-lua/plenary.nvim', branch = 'master' },
         },
         build = 'make tiktoken',

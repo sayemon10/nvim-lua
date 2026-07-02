@@ -84,9 +84,25 @@ vim.api.nvim_create_autocmd(
     }
 )
 
--- GitHub Copilot mappings
-vim.keymap.set('n', '<F1>', ':Copilot panel<CR>', { desc = 'Show Copilot panel' })
-vim.keymap.set('i', '<F12>', '<Esc>:lua ToggleCopilot()<CR>a', { desc = 'Toggle Copilot (Insert mode)' })
-vim.keymap.set('n', '<F12>', ':lua ToggleCopilot()<CR>', { desc = 'Toggle Copilot (Normal mode)' })
-vim.keymap.set('i', '<C-M-[>', '<Plug>(copilot-previous)', { desc = 'Copilot previous suggestion' })
-vim.keymap.set('i', '<C-M-]>', '<Plug>(copilot-next)', { desc = 'Copilot next suggestion' })
+-- In your keymaps.lua or snacks config
+vim.keymap.set('n', '<leader>e', function() require('snacks').explorer() end, { desc = 'File Explorer' })
+vim.keymap.set('n', '<leader>gg', function() require('snacks').lazygit() end, { desc = 'Lazygit' })
+vim.keymap.set('n', '<leader>bd', function() require('snacks').bufdelete() end, { desc = 'Delete Buffer' })
+
+-- Copilot Chat keymaps
+vim.keymap.set('n', '<leader>cc', ':CopilotChat<CR>', { desc = 'Open Copilot Chat' })
+vim.keymap.set('n', '<leader>cq', function()
+    vim.ui.input({ prompt = 'Quick Chat: ' }, function(input)
+        if input and input ~= '' then
+            require('CopilotChat').ask(input)
+        end
+    end)
+end, { desc = 'Copilot Quick Chat' })
+
+-- Copilot toggle (uses the fixed global function)
+vim.keymap.set('n', '<F12>', ':lua ToggleCopilot()<CR>', { desc = 'Toggle Copilot suggestions' })
+
+-- Remove broken mappings (delete these from your current config):
+-- vim.keymap.set('n', '<F1>', ':Copilot panel<CR>', ...)  -- Only works with copilot.vim, not copilot.lua
+-- vim.keymap.set('i', '<C-M-[>', '<Plug>(copilot-previous)', ...) -- These are copilot.vim specific
+-- vim.keymap.set('i', '<C-M-]>', '<Plug>(copilot-next)', ...)

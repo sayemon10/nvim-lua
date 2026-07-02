@@ -2,32 +2,6 @@
 
 return {
     {
-        'zbirenbaum/copilot.lua',
-        cmd = 'Copilot',
-        event = 'InsertEnter',
-        config = function()
-            require('copilot').setup({
-                suggestion = {
-                    enabled = true,
-                    auto_trigger = true,
-                    keymap = {
-                        accept = false, -- handled manually below
-                    },
-                },
-                panel = { enabled = false },
-            })
-
-            -- Tab to accept Copilot suggestion, fallback to normal Tab
-            vim.keymap.set('i', '<Tab>', function()
-                if require('copilot.suggestion').is_visible() then
-                    require('copilot.suggestion').accept()
-                else
-                    return vim.api.nvim_replace_termcodes('<Tab>', true, true, true)
-                end
-            end, { silent = true, expr = true })
-        end,
-    },
-    {
         'williamboman/mason.nvim',
         lazy = false,
         config = function()
@@ -325,22 +299,58 @@ return {
         },
     },
     {
-        'CopilotC-Nvim/CopilotChat.nvim',
-        dependencies = {
-            { 'zbirenbaum/copilot.lua' },
-            { 'nvim-lua/plenary.nvim', branch = 'master' },
-        },
-        build = 'make tiktoken',
-        config = function()
-            require('CopilotChat').setup()
-        end,
-    },
-    {
         'christoomey/vim-tmux-navigator',
         cmd = { 'TmuxNavigateLeft', 'TmuxNavigateDown', 'TmuxNavigateUp', 'TmuxNavigateRight' },
         keys = { { '<C-h>', '<cmd>TmuxNavigateLeft<cr>', desc = 'Navigate Left (Tmux)' },
             { '<C-j>', '<cmd>TmuxNavigateDown<cr>',  desc = 'Navigate Down (Tmux)' },
             { '<C-k>', '<cmd>TmuxNavigateUp<cr>',    desc = 'Navigate Up (Tmux)' },
             { '<C-l>', '<cmd>TmuxNavigateRight<cr>', desc = 'Navigate Right (Tmux)' } }
+    },
+    -- GitHub Copilot (inline completions via cmp)
+    {
+        'zbirenbaum/copilot.lua',
+        cmd = 'Copilot',
+        event = 'InsertEnter',
+        config = function()
+            require('copilot').setup({
+                suggestion = {
+                    enabled = false, -- DISABLE built-in ghost text (we use copilot-cmp)
+                    auto_trigger = false,
+                },
+                panel = { enabled = false }, -- Disable panel (optional, or set true if you want it)
+                filetypes = {
+                    markdown = true,
+                    help = true,
+                },
+            })
+        end,
+    },
+    -- Copilot as a cmp source (integrates with nvim-cmp)
+    {
+        'zbirenbaum/copilot-cmp',
+        dependencies = { 'zbirenbaum/copilot.lua' },
+        config = function()
+            require('copilot_cmp').setup()
+        end,
+    },
+
+    -- Copilot Chat
+    {
+        'CopilotC-Nvim/CopilotChat.nvim',
+        branch = 'main',
+        dependencies = {
+            { 'zbirenbaum/copilot.lua' },
+            { 'nvim-lua/plenary.nvim', branch = 'master' },
+        },
+        build = 'make tiktoken',
+        opts = {
+            auto_insert_mode = true,
+            window = {
+                width = 0.4,
+            },
+        },
+        config = function(_, opts)
+            require('CopilotChat').setup(opts)
+        end,
     },
 }

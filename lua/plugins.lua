@@ -20,35 +20,6 @@ return {
         end,
     },
     {
-        'artemave/workspace-diagnostics.nvim',
-        lazy = false,
-        dependencies = { 'neovim/nvim-lspconfig' },
-        config = function()
-            require('workspace-diagnostics').setup({
-                auto_open = true,
-                auto_close = true,
-                auto_refresh = true,
-                diagnostics = {
-                    enable = true,
-                    debounce = 1000,
-                },
-            })
-        end,
-    },
-    {
-        'alvan/vim-closetag',
-        config = function()
-            vim.g.closetag_filenames = '*.html,*.xhtml,*.jsx'
-            vim.g.closetag_filetypes = 'html,xhtml,jsx'
-        end
-    },
-    {
-        'j-hui/fidget.nvim',
-        config = function()
-            require('fidget').setup({})
-        end,
-    },
-    {
         'nvim-lualine/lualine.nvim',
         dependencies = { 'nvim-tree/nvim-web-devicons' },
         config = function()
@@ -105,7 +76,7 @@ return {
     },
     {
         'nvim-telescope/telescope.nvim',
-        tag = '0.1.8',
+        tag = 'v0.2.2',
         dependencies = {
             'nvim-lua/plenary.nvim',
             'nvim-telescope/telescope-ui-select.nvim',
@@ -127,11 +98,6 @@ return {
         config = function()
             vim.cmd('colorscheme gruvbox')
         end,
-    },
-    {
-        'vhyrro/luarocks.nvim',
-        priority = 1000,
-        config = true,
     },
     {
         'hrsh7th/nvim-cmp',
@@ -223,7 +189,15 @@ return {
         ---@type snacks.Config
         opts = {
             bigfile = { enabled = true },
-            dashboard = { enabled = true },
+            dashboard = {
+                enabled = true,
+                preset = {
+                    header =
+                    [[
+ 5/-\Y3/\/\0/\/10
+                    ]]
+                },
+            },
             explorer = { enabled = true },
             indent = { enabled = true },
             input = { enabled = true },
@@ -333,7 +307,187 @@ return {
             require('copilot_cmp').setup()
         end,
     },
+    {
+        'saghen/blink.cmp',
+        -- optional: provides snippets for the snippet source
+        dependencies = { 'rafamadriz/friendly-snippets' },
 
+        -- use a release tag to download pre-built binaries
+        version = '1.*',
+        -- AND/OR build from source
+        -- build = 'cargo build --release',
+        -- If you use nix, you can build from source with:
+        -- build = 'nix run .#build-plugin',
+
+        ---@module 'blink.cmp'
+        ---@type blink.cmp.Config
+        opts = {
+            -- 'default' (recommended) for mappings similar to built-in completions (C-y to accept)
+            -- 'super-tab' for mappings similar to vscode (tab to accept)
+            -- 'enter' for enter to accept
+            -- 'none' for no mappings
+            --
+            -- All presets have the following mappings:
+            -- C-space: Open menu or open docs if already open
+            -- C-n/C-p or Up/Down: Select next/previous item
+            -- C-e: Hide menu
+            -- C-k: Toggle signature help (if signature.enabled = true)
+            --
+            -- See :h blink-cmp-config-keymap for defining your own keymap
+            keymap = { preset = 'default' },
+
+            appearance = {
+                -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
+                -- Adjusts spacing to ensure icons are aligned
+                nerd_font_variant = 'mono'
+            },
+
+            -- (Default) Only show the documentation popup when manually triggered
+            completion = { documentation = { auto_show = false } },
+
+            -- Default list of enabled providers defined so that you can extend it
+            -- elsewhere in your config, without redefining it, due to `opts_extend`
+            sources = {
+                default = { 'lsp', 'path', 'snippets', 'buffer' },
+            },
+
+            -- (Default) Rust fuzzy matcher for typo resistance and significantly better performance
+            -- You may use a lua implementation instead by using `implementation = "lua"` or fallback to the lua implementation,
+            -- when the Rust fuzzy matcher is not available, by using `implementation = "prefer_rust"`
+            --
+            -- See the fuzzy documentation for more information
+            fuzzy = { implementation = "prefer_rust_with_warning" }
+        },
+        opts_extend = { "sources.default" }
+    },
+    {
+        "lewis6991/gitsigns.nvim",
+        event = { "BufReadPre", "BufNewFile" },
+        opts = {
+            on_attach = function(bufnr)
+                local gitsigns = require("gitsigns")
+
+                local function map(mode, l, r, opts)
+                    opts = opts or {}
+                    opts.buffer = bufnr
+                    vim.keymap.set(mode, l, r, opts)
+                end
+
+                -- Navigation
+                map("n", "]c", function()
+                    if vim.wo.diff then
+                        vim.cmd.normal({ "]c", bang = true })
+                    else
+                        gitsigns.nav_hunk("next")
+                    end
+                end)
+
+                map("n", "[c", function()
+                    if vim.wo.diff then
+                        vim.cmd.normal({ "[c", bang = true })
+                    else
+                        gitsigns.nav_hunk("prev")
+                    end
+                end)
+
+                -- Actions
+                map("n", "<leader>hs", gitsigns.stage_hunk)
+                map("n", "<leader>hr", gitsigns.reset_hunk)
+                map("v", "<leader>hs", function()
+                    gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+                end)
+                map("v", "<leader>hr", function()
+                    gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+                end)
+                map("n", "<leader>hS", gitsigns.stage_buffer)
+                map("n", "<leader>hR", gitsigns.reset_buffer)
+                map("n", "<leader>hp", gitsigns.preview_hunk)
+                map("n", "<leader>hi", gitsigns.preview_hunk_inline)
+                map("n", "<leader>hb", function()
+                    gitsigns.blame_line({ full = true })
+                end)
+                map("n", "<leader>hd", gitsigns.diffthis)
+                map("n", "<leader>hD", function()
+                    gitsigns.diffthis("~")
+                end)
+                map("n", "<leader>hQ", function()
+                    gitsigns.setqflist("all")
+                end)
+                map("n", "<leader>hq", gitsigns.setqflist)
+
+                -- Toggles
+                map("n", "<leader>tb", gitsigns.toggle_current_line_blame)
+                map("n", "<leader>tw", gitsigns.toggle_word_diff)
+
+                -- Text object
+                map({ "o", "x" }, "ih", gitsigns.select_hunk)
+            end,
+        },
+    },
+    {
+        'numToStr/Comment.nvim',
+        opts = {
+            ---Add a space b/w comment and the line
+            padding = true,
+            ---Whether the cursor should stay at its position
+            sticky = true,
+            ---Lines to be ignored while (un)comment
+            ignore = nil,
+            ---LHS of toggle mappings in NORMAL mode
+            toggler = {
+                ---Line-comment toggle keymap
+                line = 'gcc',
+                ---Block-comment toggle keymap
+                block = 'gbc',
+            },
+            ---LHS of operator-pending mappings in NORMAL and VISUAL mode
+            opleader = {
+                ---Line-comment keymap
+                line = 'gc',
+                ---Block-comment keymap
+                block = 'gb',
+            },
+            ---LHS of extra mappings
+            extra = {
+                ---Add comment on the line above
+                above = 'gcO',
+                ---Add comment on the line below
+                below = 'gco',
+                ---Add comment at the end of line
+                eol = 'gcA',
+            },
+            ---Enable keybindings
+            ---NOTE: If given `false` then the plugin won't create any mappings
+            mappings = {
+                ---Operator-pending mapping; `gcc` `gbc` `gc[count]{motion}` `gb[count]{motion}`
+                basic = true,
+                ---Extra mapping; `gco`, `gcO`, `gcA`
+                extra = true,
+            },
+            ---Function to call before (un)comment
+            pre_hook = nil,
+            ---Function to call after (un)comment
+            post_hook = nil,
+        }
+    },
+    {
+        "folke/which-key.nvim",
+        event = "VeryLazy",
+        opts = {
+            -- your configuration comes here
+            -- or leave it empty to use the default settings
+            -- refer to the configuration section below
+        },
+        keys = {
+            {
+                "<leader>?",
+                function()
+                    require("which-key").show({ global = false })
+                end,
+                desc = "Buffer Local Keymaps (which-key)",
+            },
+        },
+    },
     -- Copilot Chat
     {
         'CopilotC-Nvim/CopilotChat.nvim',

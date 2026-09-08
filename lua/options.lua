@@ -20,13 +20,13 @@ vim.opt.laststatus = 2                 -- Always show the status line
 vim.opt.listchars = 'trail:-'          -- Show trailing whitespace as '-'
 vim.opt.mouse = 'a'                    -- Enable mouse support in all modes
 vim.opt.backup = false                 -- Do not create backup files (was nobackup)
--- vim.opt.nocompatible = true           -- Behave like Vim, not Vi (essential for Neovim)
+-- vim.opt.nocompatible = true            -- Behave like Vim, not Vi (essential for Neovim)
 vim.opt.swapfile = false               -- Do not create swap files (was noswapfile)
 vim.opt.writebackup = false            -- Do not create backup files when overwriting (was nowritebackup)
 vim.opt.path:append { '**' }           -- Add current directory and subdirectories to path for file searching
 vim.opt.number = true                  -- Show absolute line numbers
 vim.opt.relativenumber = true          -- Show relative line numbers
-vim.opt.ruler = true                   -- Show current position in the status line
+-- vim.opt.ruler = true                   -- Show current position in the status line
 vim.opt.shiftwidth = 4                 -- Number of spaces to use for autoindenting
 vim.opt.shortmess:append 'I'           -- Don't show the intro message
 vim.opt.showcmd = true                 -- Show (partial) command in status line
